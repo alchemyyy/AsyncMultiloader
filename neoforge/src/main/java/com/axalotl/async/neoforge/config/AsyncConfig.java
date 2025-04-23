@@ -29,22 +29,22 @@ public class AsyncConfig {
         BUILDER.push("Async Config");
 
         disabledv = BUILDER.comment("Globally disable all toggleable functionality within the async system. Set to true to stop all asynchronous operations.")
-                .define("disabled", false);
+                .define("disabled", disabled);
 
         paraMaxv = BUILDER.comment("Maximum number of threads to use for parallel processing. Set to -1 to use default value.")
-                .define("paraMax", -1);
+                .define("paraMax", paraMax);
 
         synchronizedEntitiesv = BUILDER.comment("Disables Item entity parallelization.")
                 .define("synchronizedEntities", synchronizedEntities.stream().map(ResourceLocation::toString).toList());
 
         enableEntityMoveSyncv = BUILDER.comment("Modifies entity movement processing: true for synchronous movement (vanilla mechanics intact, less performance), false for asynchronous movement (better performance, may break mechanics).")
-                .define("enableEntityMoveSync", false);
+                .define("enableEntityMoveSync", enableEntityMoveSync);
 
         enableAsyncSpawnv = BUILDER.comment("Enables parallel processing of entity spawns. Warning, incompatible with VMP mod && Carpet mod lagFreeSpawning rule.")
-                .define("enableAsyncSpawn", false);
+                .define("enableAsyncSpawn", enableAsyncSpawn);
 
         recoverFromErrorsv = BUILDER.comment("Tries to recover from entity processing errors instead of crashing.")
-                .define("recoverFromErrors", false);
+                .define("recoverFromErrors", recoverFromErrors);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

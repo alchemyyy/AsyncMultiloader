@@ -17,7 +17,7 @@ public class AsyncConfig {
     public static int paraMax = -1;
     public static boolean enableEntityMoveSync = false;
     public static boolean enableAsyncSpawn = false;
-    public static boolean recoverFromErrors = false;
+    public static boolean recoverFromErrors = true;
     public static Set<ResourceLocation> synchronizedEntities = new HashSet<>(Set.of(
             Objects.requireNonNull(ResourceLocation.tryBuild("minecraft", "tnt")),
             Objects.requireNonNull(ResourceLocation.tryBuild("minecraft", "item")),

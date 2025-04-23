@@ -72,11 +72,11 @@ public class AsyncConfig {
     private static void loadConfigValues() {
         Set<String> processedKeys = new HashSet<>(List.of("disabled", "paraMax", "enableEntityMoveSync", "synchronizedEntities"));
 
-        disabled = CONFIG.getOrElse("disabled", false);
-        paraMax = CONFIG.getOrElse("paraMax", -1);
-        enableEntityMoveSync = CONFIG.getOrElse("enableEntityMoveSync", false);
-        enableAsyncSpawn = CONFIG.getOrElse("enableAsyncSpawn", false);
-        recoverFromErrors = CONFIG.getOrElse("recoverFromErrors", false);
+        disabled = CONFIG.getOrElse("disabled", disabled);
+        paraMax = CONFIG.getOrElse("paraMax", paraMax);
+        enableEntityMoveSync = CONFIG.getOrElse("enableEntityMoveSync", enableEntityMoveSync);
+        enableAsyncSpawn = CONFIG.getOrElse("enableAsyncSpawn", enableAsyncSpawn);
+        recoverFromErrors = CONFIG.getOrElse("recoverFromErrors", recoverFromErrors);
 
         synchronizedEntities = new HashSet<>();
         CONFIG.<List<String>>getOptional("synchronizedEntities").ifPresentOrElse(ids -> {
