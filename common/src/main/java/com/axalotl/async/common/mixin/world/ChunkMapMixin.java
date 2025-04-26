@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Mixin(value = ChunkMap.class, priority = 1500)
 public abstract class ChunkMapMixin extends ChunkStorage implements ChunkHolder.PlayerProvider {
@@ -44,7 +45,7 @@ public abstract class ChunkMapMixin extends ChunkStorage implements ChunkHolder.
     @Inject(method = "<init>", at = @At("TAIL"))
     private void replaceConVars(CallbackInfo ci) {
         entityMap = new Int2ObjectConcurrentHashMap<>();
-        //pendingGenerationTasks = new CopyOnWriteArrayList<>();
+        pendingGenerationTasks = new CopyOnWriteArrayList<>();
     }
 
     @WrapMethod(method = "releaseGeneration")

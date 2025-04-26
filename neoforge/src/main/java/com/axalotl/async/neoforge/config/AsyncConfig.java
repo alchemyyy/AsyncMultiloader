@@ -2,13 +2,9 @@ package com.axalotl.async.neoforge.config;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 import static com.axalotl.async.common.config.AsyncConfig.*;
 
