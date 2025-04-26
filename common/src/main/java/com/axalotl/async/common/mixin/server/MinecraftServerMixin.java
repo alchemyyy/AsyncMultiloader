@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = MinecraftServer.class, priority = Integer.MAX_VALUE)
 public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
 
-	public MinecraftServerMixin(String name) {
-		super(name);
-	}
+    public MinecraftServerMixin(String name) {
+        super(name);
+    }
 
-	@Redirect(method = "reloadResources", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;isSameThread()Z"))
-	private boolean onServerExecutionThreadPatch(MinecraftServer minecraftServer) {
-		return ParallelProcessor.isServerExecutionThread();
-	}
+    @Redirect(method = "reloadResources", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;isSameThread()Z"))
+    private boolean onServerExecutionThreadPatch(MinecraftServer minecraftServer) {
+        return ParallelProcessor.isServerExecutionThread();
+    }
 }
 

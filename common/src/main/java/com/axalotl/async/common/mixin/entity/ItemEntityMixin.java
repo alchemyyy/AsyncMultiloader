@@ -12,11 +12,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
+
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity {
 
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
+
     public ItemEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }

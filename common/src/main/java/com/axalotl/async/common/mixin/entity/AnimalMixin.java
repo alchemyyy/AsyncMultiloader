@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//Yarn Name: AnimalEntity.class
 @Mixin(Animal.class)
 public abstract class AnimalMixin extends Entity {
+
     @Unique
     private final AtomicBoolean async$breedingFlag = new AtomicBoolean(false);
     @Unique

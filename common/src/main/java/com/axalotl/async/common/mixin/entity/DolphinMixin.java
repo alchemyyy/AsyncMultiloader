@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: DolphinEntity.class
 @Mixin(Dolphin.class)
 public abstract class DolphinMixin extends WaterAnimal {
 

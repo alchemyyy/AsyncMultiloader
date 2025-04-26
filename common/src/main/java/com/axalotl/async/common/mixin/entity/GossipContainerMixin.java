@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Map;
 import java.util.UUID;
 
-//Yarn Name: VillagerGossips.class
 @Mixin(GossipContainer.class)
 public class GossipContainerMixin {
+
     @Shadow
     private final Map<UUID, ?> gossips = ConcurrentCollections.newHashMap();
 }

@@ -48,7 +48,20 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ParallelProcessor {
+    public static final AtomicInteger currentEntities = new AtomicInteger();
+    public static final Set<Class<?>> specialEntities = Set.of(
+            FallingBlockEntity.class,
+            Player.class,
+            ServerPlayer.class
+    );
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final AtomicInteger threadPoolID = new AtomicInteger();
+    private static final Queue<CompletableFuture<?>> taskQueue = new ConcurrentLinkedQueue<>();
+    private static final Set<UUID> blacklistedEntity = ConcurrentHashMap.newKeySet();
+    private static final Map<UUID, Integer> portalTickSyncMap = new ConcurrentHashMap<>();
+    private static final Map<String, Set<Thread>> mcThreadTracker = new ConcurrentHashMap<>();
+    public static MinecraftServer server;
+    private static ExecutorService tickPool;
 
     public static MinecraftServer getServer() {
         return server;
@@ -57,22 +70,6 @@ public class ParallelProcessor {
     public static void setServer(MinecraftServer server) {
         ParallelProcessor.server = server;
     }
-
-    public static MinecraftServer server;
-
-    public static final AtomicInteger currentEntities = new AtomicInteger();
-    private static final AtomicInteger threadPoolID = new AtomicInteger();
-    private static ExecutorService tickPool;
-    private static final Queue<CompletableFuture<?>> taskQueue = new ConcurrentLinkedQueue<>();
-    private static final Set<UUID> blacklistedEntity = ConcurrentHashMap.newKeySet();
-    private static final Map<UUID, Integer> portalTickSyncMap = new ConcurrentHashMap<>();
-    private static final Map<String, Set<Thread>> mcThreadTracker = new ConcurrentHashMap<>();
-
-    public static final Set<Class<?>> specialEntities = Set.of(
-            FallingBlockEntity.class,
-            Player.class,
-            ServerPlayer.class
-    );
 
     public static void setupThreadPool(int parallelism, Class asyncClass) {
         ForkJoinPool.ForkJoinWorkerThreadFactory threadFactory = pool -> {
@@ -225,8 +222,7 @@ public class ParallelProcessor {
                     LOGGER.error("Timeout during entity tick processing", ex);
                     return null;
                 });
-            }
-            else {
+            } else {
                 allTasks.orTimeout(((DedicatedServer) server).getMaxTickLength(), TimeUnit.MILLISECONDS).exceptionally(ex -> {
                     crash("Timeout during entity tick processing: ", ex);
                     return null;
@@ -244,8 +240,7 @@ public class ParallelProcessor {
                 for (CompletableFuture<?> future : futuresList) {
                     future.completeExceptionally(new RuntimeException("Async processing failed critically."));
                 }
-            }
-            else {
+            } else {
                 crash("Critical error during entity tick processing: ", e);
             }
         }

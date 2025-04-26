@@ -15,14 +15,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//Yarn Name: SectionedEntityCache.class
 @Mixin(EntitySectionStorage.class)
 public abstract class EntitySectionStorageMixin<T extends EntityAccess> {
-    @Mutable
-    @Shadow @Final private Long2ObjectMap<EntitySection<T>> sections;
 
     @Mutable
-    @Shadow @Final private LongSortedSet sectionIds;
+    @Shadow
+    @Final
+    private Long2ObjectMap<EntitySection<T>> sections;
+
+    @Mutable
+    @Shadow
+    @Final
+    private LongSortedSet sectionIds;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void replaceConVars(CallbackInfo ci) {

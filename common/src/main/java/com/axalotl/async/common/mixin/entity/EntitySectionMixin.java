@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: EntityTrackingSection.class
 @Mixin(EntitySection.class)
 public class EntitySectionMixin {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

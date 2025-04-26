@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: VillagerEntity.class
 @Mixin(Villager.class)
 public class VillagerMixin {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

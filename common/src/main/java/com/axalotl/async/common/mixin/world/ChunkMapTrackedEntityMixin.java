@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
 
-//Yarn Name: ServerChunkLoadingManager.EntityTracker.class
 @Mixin(value = ChunkMap.TrackedEntity.class)
 public class ChunkMapTrackedEntityMixin {
 

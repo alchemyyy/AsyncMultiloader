@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 import java.util.function.Predicate;
 
-//Yarn Name: LivingTargetCache.class
 @Mixin(NearestVisibleLivingEntities.class)
 public class NearestVisibleLivingEntitiesMixin {
 

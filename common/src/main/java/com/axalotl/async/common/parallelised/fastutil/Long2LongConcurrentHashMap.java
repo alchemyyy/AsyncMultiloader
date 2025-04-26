@@ -32,13 +32,13 @@ public class Long2LongConcurrentHashMap implements Long2LongMap {
 
     @Override
     public long put(final long key, final long val) {
-        backing.put(key,val);
+        backing.put(key, val);
         return val;
     }
 
     @Override
     public Long put(final Long key, final Long val) {
-        backing.put(key,val);
+        backing.put(key, val);
         return val;
     }
 
@@ -46,7 +46,7 @@ public class Long2LongConcurrentHashMap implements Long2LongMap {
     public long remove(final long key) {
         try {
             return backing.remove(key);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return 0;
         }
     }

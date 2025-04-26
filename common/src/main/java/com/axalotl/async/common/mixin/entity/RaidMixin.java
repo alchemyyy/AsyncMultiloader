@@ -16,13 +16,14 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-//Yarn Name: Raid.class
 @Mixin(Raid.class)
 public class RaidMixin {
-    @Shadow
-    private final Map<Integer, Set<Raider>> groupRaiderMap = ConcurrentCollections.newHashMap();
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
+
+    @Shadow
+    private final Map<Integer, Set<Raider>> groupRaiderMap = ConcurrentCollections.newHashMap();
 
     @WrapMethod(method = "addWaveMob(ILnet/minecraft/world/entity/raid/Raider;)Z")
     private boolean addWaveMob(int wave, Raider entity, Operation<Boolean> original) {

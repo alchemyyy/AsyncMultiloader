@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 import java.util.UUID;
 
-//Yarn Name: EntityIndex.class
 @Mixin(EntityLookup.class)
 public abstract class EntityLookupMixin<T extends EntityAccess> {
+
     @Shadow
     @Final
     @Mutable
@@ -29,9 +29,8 @@ public abstract class EntityLookupMixin<T extends EntityAccess> {
     @Mutable
     private Map<UUID, T> byUuid;
 
-    @Inject(method = "<init>",at = @At("TAIL"))
-    private void replaceConVars(CallbackInfo ci)
-    {
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void replaceConVars(CallbackInfo ci) {
         byId = new Int2ObjectConcurrentHashMap<>();
         byUuid = ConcurrentCollections.newHashMap();
     }

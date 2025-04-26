@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
-//Yarn Name: NearestPlayersSensor.class
 @Mixin(value = PlayerSensor.class, priority = 1500)
 public class PlayersSensorMixin {
 

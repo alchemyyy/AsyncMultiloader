@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-//Yarn Name: ChainRestrictedNeighborUpdater.class
 @Mixin(CollectingNeighborUpdater.class)
 public abstract class CollectingNeighborUpdaterMixin implements NeighborUpdater {
 

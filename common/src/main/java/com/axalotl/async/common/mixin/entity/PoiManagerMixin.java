@@ -18,9 +18,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-//Yarn Name: PointOfInterestStorage.class
 @Mixin(PoiManager.class)
 public class PoiManagerMixin {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

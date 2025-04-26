@@ -10,7 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 
-//Yarn Name: ServerPlayerEntity.class
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player {
     public ServerPlayerMixin(Level world, BlockPos pos, float yaw, GameProfile gameProfile) {

@@ -24,37 +24,37 @@ import static com.axalotl.async.neoforge.config.AsyncConfig.loadConfig;
 @Mod(Async.MOD_ID)
 public class Async {
 
-	public static final String MOD_ID = "async";
-	public static final Logger LOGGER = LogUtils.getLogger();
+    public static final String MOD_ID = "async";
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-	public Async(FMLModContainer container) {
-		LOGGER.info("Initializing Async...");
-		NeoForge.EVENT_BUS.register(this);
-		NeoForgePlatformEvents.init();
-		LOGGER.info("Initializing Async Config...");
-		container.registerConfig(ModConfig.Type.COMMON, SPEC, "async.toml");
-		LOGGER.info("Async Initialized successfully");
-	}
+    public Async(FMLModContainer container) {
+        LOGGER.info("Initializing Async...");
+        NeoForge.EVENT_BUS.register(this);
+        NeoForgePlatformEvents.init();
+        LOGGER.info("Initializing Async Config...");
+        container.registerConfig(ModConfig.Type.COMMON, SPEC, "async.toml");
+        LOGGER.info("Async Initialized successfully");
+    }
 
-	@SubscribeEvent
-	public void onServerStarting(ServerStartingEvent event) {
-		LOGGER.info("Async Setting up thread-pool...");
-		loadConfig();
-		StatsCommand.runStatsThread();
-		ParallelProcessor.setServer(event.getServer());
-		ParallelProcessor.setupThreadPool(getParallelism(), this.getClass());
-	}
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        LOGGER.info("Async Setting up thread-pool...");
+        loadConfig();
+        StatsCommand.runStatsThread();
+        ParallelProcessor.setServer(event.getServer());
+        ParallelProcessor.setupThreadPool(getParallelism(), this.getClass());
+    }
 
-	@SubscribeEvent
-	public void registerCommandsEvent(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-		AsyncCommand.register(dispatcher);
-	}
+    @SubscribeEvent
+    public void registerCommandsEvent(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        AsyncCommand.register(dispatcher);
+    }
 
-	@SubscribeEvent
-	public void onServerStopping(ServerStoppingEvent event) {
-		LOGGER.info("Shutting down Async thread pool...");
-		ParallelProcessor.stop();
-		StatsCommand.shutdown();
-	}
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        LOGGER.info("Shutting down Async thread pool...");
+        ParallelProcessor.stop();
+        StatsCommand.shutdown();
+    }
 }

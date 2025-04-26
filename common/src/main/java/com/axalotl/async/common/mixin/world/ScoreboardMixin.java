@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Map;
 
-//Yarn Name: Scoreboard.class
 @Mixin(Scoreboard.class)
 public class ScoreboardMixin {
+
     @Shadow
     private final Map<String, Map<Objective, Score>> playerScores = ConcurrentCollections.newHashMap();
 }

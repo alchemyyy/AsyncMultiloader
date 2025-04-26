@@ -14,10 +14,8 @@ import static com.axalotl.async.common.config.AsyncConfig.*;
 
 public class AsyncConfig {
     public static final Logger LOGGER = LoggerFactory.getLogger("Async Config");
-
-    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
-
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     private static final ModConfigSpec.ConfigValue<Boolean> disabledv;
     private static final ModConfigSpec.ConfigValue<Integer> paraMaxv;
     private static final ModConfigSpec.ConfigValue<Boolean> enableEntityMoveSyncv;

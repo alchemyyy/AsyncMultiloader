@@ -51,7 +51,7 @@ public class Long2ObjectOpenConcurrentHashMap<V> extends Long2ObjectOpenHashMap<
      * Constructs an empty map with specified initial capacity and load factor
      *
      * @param initialCapacity initial capacity of the map
-     * @param loadFactor load factor for the map
+     * @param loadFactor      load factor for the map
      */
     public Long2ObjectOpenConcurrentHashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
@@ -286,9 +286,9 @@ public class Long2ObjectOpenConcurrentHashMap<V> extends Long2ObjectOpenHashMap<
     @Override
     public ObjectSet<Map.Entry<Long, V>> entrySet() {
         return new FastUtilHackUtil.ConvertingObjectSet<>(
-            backing.entrySet(),
-            Function.identity(),
-            Function.identity()
+                backing.entrySet(),
+                Function.identity(),
+                Function.identity()
         );
     }
 
@@ -311,7 +311,7 @@ public class Long2ObjectOpenConcurrentHashMap<V> extends Long2ObjectOpenHashMap<
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Map<?,?> that)) return false;
+        if (!(o instanceof Map<?, ?> that)) return false;
         return backing.equals(that);
     }
 

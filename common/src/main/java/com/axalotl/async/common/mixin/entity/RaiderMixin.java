@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: RaiderEntity.class
 @Mixin(Raider.class)
 public class RaiderMixin {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

@@ -35,99 +35,99 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-//Yarn Name: ServerWorld.class
 @Mixin(value = ServerLevel.class, priority = 1500)
 public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
-	@Unique
-	ConcurrentLinkedQueue<BlockEventData> async$syncedBlockEventQueue;
-	@Shadow
-	@Final
-	@Mutable
-	Set<Mob> navigatingMobs;
 
-	@Shadow
-	@Final
+    @Shadow
+    @Final
     public EntityTickList entityTickList;
 
-	@Shadow
-	@Final
-	private ServerChunkCache chunkSource;
+    @Unique
+    ConcurrentLinkedQueue<BlockEventData> async$syncedBlockEventQueue;
 
-	@Shadow
-	public abstract void tickNonPassenger(Entity entity);
+    @Shadow
+    @Final
+    @Mutable
+    Set<Mob> navigatingMobs;
 
-	@Shadow
-	protected abstract boolean shouldDiscardEntity(Entity entity);
+    @Shadow
+    @Final
+    private ServerChunkCache chunkSource;
 
+    protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
+        super(levelData, dimension, registryAccess, dimensionTypeRegistration, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
+    }
 
-	protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
-		super(levelData, dimension, registryAccess, dimensionTypeRegistration, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
-	}
+    @Shadow
+    public abstract void tickNonPassenger(Entity entity);
 
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void init(CallbackInfo ci) {
-		navigatingMobs = ConcurrentCollections.newHashSet();
-		async$syncedBlockEventQueue = new ConcurrentLinkedQueue<>();
-	}
+    @Shadow
+    protected abstract boolean shouldDiscardEntity(Entity entity);
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/EntityTickList;forEach(Ljava/util/function/Consumer;)V"))
-	private void overwriteEntityTicking(EntityTickList entityTickList, Consumer<Entity> consumer) {
-		ProfilerFiller profiler = this.getProfiler();
-		this.entityTickList.forEach(entity -> {
-			if (!entity.isRemoved()) {
-				if (this.shouldDiscardEntity(entity)) {
-					entity.discard();
-				} else if (!this.tickRateManager().isEntityFrozen(entity)) {
-					profiler.push("checkDespawn");
-					entity.checkDespawn();
-					profiler.pop();
-					if (this.chunkSource.chunkMap.getDistanceManager().inEntityTickingRange(entity.chunkPosition().toLong())) {
-						Entity entity2 = entity.getVehicle();
-						if (entity2 != null) {
-							if (!entity2.isRemoved() && entity2.hasPassenger(entity)) {
-								return;
-							}
-							entity.stopRiding();
-						}
-						profiler.push("tick");
-						ParallelProcessor.callEntityTick(this::tickNonPassenger, entity);
-						profiler.pop();
-					}
-				}
-			}
-		});
-		profiler.push("tick");
-		ParallelProcessor.postEntityTick();
-		profiler.pop();
-	}
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void init(CallbackInfo ci) {
+        navigatingMobs = ConcurrentCollections.newHashSet();
+        async$syncedBlockEventQueue = new ConcurrentLinkedQueue<>();
+    }
 
-	// fabric compilation will warn it can't find these method mappings, but they work fine
-	@Redirect(method = "blockEvent", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;add(Ljava/lang/Object;)Z"))
-	private boolean overwriteQueueAdd(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet, Object object) {
-		return async$syncedBlockEventQueue.add((BlockEventData) object);
-	}
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/EntityTickList;forEach(Ljava/util/function/Consumer;)V"))
+    private void overwriteEntityTicking(EntityTickList entityTickList, Consumer<Entity> consumer) {
+        ProfilerFiller profiler = this.getProfiler();
+        this.entityTickList.forEach(entity -> {
+            if (!entity.isRemoved()) {
+                if (this.shouldDiscardEntity(entity)) {
+                    entity.discard();
+                } else if (!this.tickRateManager().isEntityFrozen(entity)) {
+                    profiler.push("checkDespawn");
+                    entity.checkDespawn();
+                    profiler.pop();
+                    if (this.chunkSource.chunkMap.getDistanceManager().inEntityTickingRange(entity.chunkPosition().toLong())) {
+                        Entity entity2 = entity.getVehicle();
+                        if (entity2 != null) {
+                            if (!entity2.isRemoved() && entity2.hasPassenger(entity)) {
+                                return;
+                            }
+                            entity.stopRiding();
+                        }
+                        profiler.push("tick");
+                        ParallelProcessor.callEntityTick(this::tickNonPassenger, entity);
+                        profiler.pop();
+                    }
+                }
+            }
+        });
+        profiler.push("tick");
+        ParallelProcessor.postEntityTick();
+        profiler.pop();
+    }
 
-	@Redirect(method = "clearBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;removeIf(Ljava/util/function/Predicate;)Z"))
-	private boolean overwriteQueueRemoveIf(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet, Predicate<BlockEventData> filter) {
-		return async$syncedBlockEventQueue.removeIf(filter);
-	}
+    // fabric compilation will warn it can't find these method mappings, but they work fine
+    @Redirect(method = "blockEvent", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;add(Ljava/lang/Object;)Z"))
+    private boolean overwriteQueueAdd(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet, Object object) {
+        return async$syncedBlockEventQueue.add((BlockEventData) object);
+    }
 
-	@Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;isEmpty()Z"))
-	private boolean overwriteEmptyCheck(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet) {
-		return async$syncedBlockEventQueue.isEmpty();
-	}
+    @Redirect(method = "clearBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;removeIf(Ljava/util/function/Predicate;)Z"))
+    private boolean overwriteQueueRemoveIf(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet, Predicate<BlockEventData> filter) {
+        return async$syncedBlockEventQueue.removeIf(filter);
+    }
 
-	@Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;removeFirst()Ljava/lang/Object;"))
-	private Object overwriteQueueRemoveFirst(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet) {
-		return async$syncedBlockEventQueue.poll();
-	}
+    @Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;isEmpty()Z"))
+    private boolean overwriteEmptyCheck(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet) {
+        return async$syncedBlockEventQueue.isEmpty();
+    }
 
-	@Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;addAll(Ljava/util/Collection;)Z"))
-	private boolean overwriteQueueAddAll(ObjectLinkedOpenHashSet<BlockEventData> instance, Collection<? extends BlockEventData> c) {
-		return async$syncedBlockEventQueue.addAll(c);
-	}
+    @Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;removeFirst()Ljava/lang/Object;"))
+    private Object overwriteQueueRemoveFirst(ObjectLinkedOpenHashSet<BlockEventData> objectLinkedOpenHashSet) {
+        return async$syncedBlockEventQueue.poll();
+    }
 
-	@Redirect(method = "sendBlockUpdated", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerLevel;isUpdatingNavigations:Z", opcode = Opcodes.PUTFIELD))
-	private void skipSendBlockUpdatedCheck(ServerLevel instance, boolean value) {
-	}
+    @Redirect(method = "runBlockEvents", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;addAll(Ljava/util/Collection;)Z"))
+    private boolean overwriteQueueAddAll(ObjectLinkedOpenHashSet<BlockEventData> instance, Collection<? extends BlockEventData> c) {
+        return async$syncedBlockEventQueue.addAll(c);
+    }
+
+    @Redirect(method = "sendBlockUpdated", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerLevel;isUpdatingNavigations:Z", opcode = Opcodes.PUTFIELD))
+    private void skipSendBlockUpdatedCheck(ServerLevel instance, boolean value) {
+    }
 }

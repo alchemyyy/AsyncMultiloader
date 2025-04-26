@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//
 @Mixin(PersistentEntitySectionManager.Callback.class)
 public abstract class CallbackMixin implements AutoCloseable {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

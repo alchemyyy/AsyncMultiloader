@@ -23,9 +23,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.nio.file.Path;
 import java.util.List;
 
-//Yarn Name: ServerChunkLoadingManager.class
 @Mixin(value = ChunkMap.class, priority = 1500)
 public abstract class ChunkMapMixin extends ChunkStorage implements ChunkHolder.PlayerProvider {
+
     @Shadow
     @Final
     @Mutable

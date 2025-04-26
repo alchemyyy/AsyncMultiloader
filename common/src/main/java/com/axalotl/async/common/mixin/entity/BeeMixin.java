@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: BeeEntity.class
 @Mixin(Bee.class)
 public abstract class BeeMixin extends Animal implements NeutralMob, FlyingAnimal {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

@@ -25,15 +25,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: World.class
 @Mixin(value = Level.class, priority = 1500)
 public abstract class LevelMixin implements LevelAccessor, AutoCloseable {
-    @Shadow
-    @Final
-    private Thread thread;
 
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
+
+    @Shadow
+    @Final
+    private Thread thread;
 
     @Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private void postEntityPreBlockEntityTick(CallbackInfo ci) {

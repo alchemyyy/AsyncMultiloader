@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//Yarn Name: BeehiveBlockEntity.class
 @Mixin(BeehiveBlockEntity.class)
 public class BeehiveBlockEntityBeeMixin {
-	@Shadow
-	private final List<BeehiveBlockEntity.BeeData> stored = Collections.synchronizedList(new ArrayList<>());
+
+    @Shadow
+    private final List<BeehiveBlockEntity.BeeData> stored = Collections.synchronizedList(new ArrayList<>());
 }

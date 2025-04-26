@@ -12,29 +12,29 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//Yarn Name: FrogEntity.class
 @Mixin(Frog.class)
 public abstract class FrogMixin extends Animal {
-	@Unique
-	private final AtomicBoolean async$breedingFlag = new AtomicBoolean(false);
 
-	protected FrogMixin(EntityType<? extends Animal> entityType, Level world) {
-		super(entityType, world);
-	}
+    @Unique
+    private final AtomicBoolean async$breedingFlag = new AtomicBoolean(false);
 
-	@WrapMethod(method = "spawnChildFromBreeding")
-	private void breed(ServerLevel world, Animal other, Operation<Void> original) {
-		if (this.getId() > other.getId()) {
-			return;
-		}
-		FrogMixin otherMixin = (FrogMixin) other;
-		if (this.async$breedingFlag.compareAndSet(false, true) && otherMixin.async$breedingFlag.compareAndSet(false, true)) {
-			try {
-				original.call(world, other);
-			} finally {
-				this.async$breedingFlag.set(false);
-				otherMixin.async$breedingFlag.set(false);
-			}
-		}
-	}
+    protected FrogMixin(EntityType<? extends Animal> entityType, Level world) {
+        super(entityType, world);
+    }
+
+    @WrapMethod(method = "spawnChildFromBreeding")
+    private void breed(ServerLevel world, Animal other, Operation<Void> original) {
+        if (this.getId() > other.getId()) {
+            return;
+        }
+        FrogMixin otherMixin = (FrogMixin) other;
+        if (this.async$breedingFlag.compareAndSet(false, true) && otherMixin.async$breedingFlag.compareAndSet(false, true)) {
+            try {
+                original.call(world, other);
+            } finally {
+                this.async$breedingFlag.set(false);
+                otherMixin.async$breedingFlag.set(false);
+            }
+        }
+    }
 }

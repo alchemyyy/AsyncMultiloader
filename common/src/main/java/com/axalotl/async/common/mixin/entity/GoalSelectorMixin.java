@@ -18,39 +18,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: GoalSelector.class
 @Mixin(GoalSelector.class)
 public abstract class GoalSelectorMixin {
-	@Unique
-	private static final ReentrantLock async$lock = new ReentrantLock();
-	@Mutable
-	@Shadow
-	@Final
-	private Set<WrappedGoal> availableGoals;
 
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(CallbackInfo ci) {
-		this.availableGoals = ConcurrentCollections.newHashSet();
-	}
+    @Unique
+    private static final ReentrantLock async$lock = new ReentrantLock();
 
-	@WrapMethod(method = "tickRunningGoals")
-	private void tickGoals(boolean tickAll, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(tickAll);
-		}
-	}
+    @Mutable
+    @Shadow
+    @Final
+    private Set<WrappedGoal> availableGoals;
 
-	@WrapMethod(method = "addGoal")
-	private void add(int priority, Goal goal, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(priority, goal);
-		}
-	}
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        this.availableGoals = ConcurrentCollections.newHashSet();
+    }
 
-	@WrapMethod(method = "removeGoal")
-	private void remove(Goal goal, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(goal);
-		}
-	}
+    @WrapMethod(method = "tickRunningGoals")
+    private void tickGoals(boolean tickAll, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(tickAll);
+        }
+    }
+
+    @WrapMethod(method = "addGoal")
+    private void add(int priority, Goal goal, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(priority, goal);
+        }
+    }
+
+    @WrapMethod(method = "removeGoal")
+    private void remove(Goal goal, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(goal);
+        }
+    }
 }

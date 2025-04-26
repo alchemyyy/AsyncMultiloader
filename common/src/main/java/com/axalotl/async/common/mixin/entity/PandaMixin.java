@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: PandaEntity.class
 @Mixin(Panda.class)
 public class PandaMixin {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

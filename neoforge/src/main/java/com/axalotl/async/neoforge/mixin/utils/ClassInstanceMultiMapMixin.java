@@ -21,6 +21,7 @@ import java.util.stream.Collector;
 
 @Mixin(value = ClassInstanceMultiMap.class)
 public abstract class ClassInstanceMultiMapMixin<T> extends AbstractCollection<T> {
+
     @Unique
     private static final ReentrantLock async$lock = new ReentrantLock();
 

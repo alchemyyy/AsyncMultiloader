@@ -14,12 +14,13 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Optional;
 
-//Yarn Name: SerializingRegionBasedStorage.class
 @Mixin(SectionStorage.class)
 public abstract class SectionStorageMixin<R> implements AutoCloseable {
+
     @Shadow
     @Mutable
     private final Long2ObjectMap<Optional<R>> storage = new Long2ObjectConcurrentHashMap<>();
+
     @Shadow
     @Mutable
     private final LongLinkedOpenHashSet dirty = new ConcurrentLongLinkedOpenHashSet();

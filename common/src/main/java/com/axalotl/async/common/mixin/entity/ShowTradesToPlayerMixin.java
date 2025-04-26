@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-//Yarn Name: HoldTradeOffersTask.class
 @Mixin(ShowTradesToPlayer.class)
 public class ShowTradesToPlayerMixin {
+
     @Shadow
     private final List<ItemStack> displayItems = new CopyOnWriteArrayList<>();
 }

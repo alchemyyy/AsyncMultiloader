@@ -22,7 +22,8 @@ public final class ConcurrentLongSortedSet implements LongSortedSet {
     /**
      * Creates a new empty concurrent sorted set
      */
-    public ConcurrentLongSortedSet() {}
+    public ConcurrentLongSortedSet() {
+    }
 
     /**
      * Creates a new concurrent sorted set containing elements from the given collection

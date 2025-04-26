@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: ServerWorld.ServerEntityHandler.class
 @Mixin(ServerLevel.EntityCallbacks.class)
 public class EntityCallbacksMixin {
 

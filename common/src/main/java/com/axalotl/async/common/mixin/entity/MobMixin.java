@@ -10,37 +10,37 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: Mob.class
 @Mixin(Mob.class)
 public class MobMixin {
-	@Unique
-	private static final ReentrantLock async$lock = new ReentrantLock();
 
-	@WrapMethod(method = "equipItemIfPossible")
-	private ItemStack tryEquip(ItemStack stack, Operation<ItemStack> original) {
-		synchronized (async$lock) {
-			return original.call(stack);
-		}
-	}
+    @Unique
+    private static final ReentrantLock async$lock = new ReentrantLock();
 
-	@WrapMethod(method = "setItemSlot")
-	private void equipStack(EquipmentSlot slot, ItemStack stack, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(slot, stack);
-		}
-	}
+    @WrapMethod(method = "equipItemIfPossible")
+    private ItemStack tryEquip(ItemStack stack, Operation<ItemStack> original) {
+        synchronized (async$lock) {
+            return original.call(stack);
+        }
+    }
 
-	@WrapMethod(method = "setItemSlotAndDropWhenKilled")
-	private void equipLootStack(EquipmentSlot slot, ItemStack stack, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(slot, stack);
-		}
-	}
+    @WrapMethod(method = "setItemSlot")
+    private void equipStack(EquipmentSlot slot, ItemStack stack, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(slot, stack);
+        }
+    }
 
-	@WrapMethod(method = "setBodyArmorItem")
-	private void equipLootStack(ItemStack stack, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(stack);
-		}
-	}
+    @WrapMethod(method = "setItemSlotAndDropWhenKilled")
+    private void equipLootStack(EquipmentSlot slot, ItemStack stack, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(slot, stack);
+        }
+    }
+
+    @WrapMethod(method = "setBodyArmorItem")
+    private void equipLootStack(ItemStack stack, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(stack);
+        }
+    }
 }

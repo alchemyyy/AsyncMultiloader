@@ -10,16 +10,16 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: OpenDoorsTask.class
 @Mixin(InteractWithDoor.class)
 public abstract class OpenDoorsTaskMixin {
-	@Unique
-	private static final ReentrantLock async$lock = new ReentrantLock();
 
-	@WrapMethod(method = "isMobComingThroughDoor")
-	private static boolean hasReached(Brain<?> brain, BlockPos pos, Operation<Boolean> original) {
-		synchronized (async$lock) {
-			return original.call(brain, pos);
-		}
-	}
+    @Unique
+    private static final ReentrantLock async$lock = new ReentrantLock();
+
+    @WrapMethod(method = "isMobComingThroughDoor")
+    private static boolean hasReached(Brain<?> brain, BlockPos pos, Operation<Boolean> original) {
+        synchronized (async$lock) {
+            return original.call(brain, pos);
+        }
+    }
 }

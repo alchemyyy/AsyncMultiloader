@@ -26,19 +26,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.concurrent.CompletableFuture;
 
-//Yarn Name: ServerChunkManager.class
 @Mixin(value = ServerChunkCache.class, priority = 1500)
 public abstract class ServerChunkCacheMixin extends ChunkSource {
+
+    @Shadow
+    @Final
+    public ChunkMap chunkMap;
+
     @Shadow
     @Final
     Thread mainThread;
 
     @Shadow
     public abstract @Nullable ChunkHolder getVisibleChunkIfPresent(long pos);
-
-    @Shadow
-    @Final
-    public ChunkMap chunkMap;
 
     @Inject(method = "getChunk(IILnet/minecraft/world/level/chunk/status/ChunkStatus;Z)Lnet/minecraft/world/level/chunk/ChunkAccess;",
             at = @At("HEAD"), cancellable = true)

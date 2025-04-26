@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Map;
 
-//Yarn Name: RandomSequencesState.class
 @Mixin(RandomSequences.class)
 public class RandomSequencesMixin {
-	@Shadow
-	private final Map<ResourceLocation, RandomSequence> sequences = ConcurrentCollections.newHashMap();
+
+    @Shadow
+    private final Map<ResourceLocation, RandomSequence> sequences = ConcurrentCollections.newHashMap();
 }

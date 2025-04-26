@@ -12,45 +12,44 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-//Yarn Name: LivingEntity.class
 @Mixin(value = LivingEntity.class, priority = 1001)
 public abstract class LivingEntityMixin extends Entity {
 
-	@Unique
-	private static final ReentrantLock async$lock = new ReentrantLock();
+    @Unique
+    private static final ReentrantLock async$lock = new ReentrantLock();
 
-	public LivingEntityMixin(EntityType<?> type, Level world) {
-		super(type, world);
-	}
+    public LivingEntityMixin(EntityType<?> type, Level world) {
+        super(type, world);
+    }
 
-	@WrapMethod(method = "die")
-	private synchronized void die(DamageSource damageSource, Operation<Void> original) {
-		original.call(damageSource);
-	}
+    @WrapMethod(method = "die")
+    private synchronized void die(DamageSource damageSource, Operation<Void> original) {
+        original.call(damageSource);
+    }
 
-	@WrapMethod(method = "dropFromLootTable")
-	private synchronized void dropFromLootTable(DamageSource damageSource, boolean causedByPlayer, Operation<Void> original) {
-		original.call(damageSource, causedByPlayer);
-	}
+    @WrapMethod(method = "dropFromLootTable")
+    private synchronized void dropFromLootTable(DamageSource damageSource, boolean causedByPlayer, Operation<Void> original) {
+        original.call(damageSource, causedByPlayer);
+    }
 
-	@WrapMethod(method = "blockedByShield")
-	private synchronized void knockback(LivingEntity defender, Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call(defender);
-		}
-	}
+    @WrapMethod(method = "blockedByShield")
+    private synchronized void knockback(LivingEntity defender, Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call(defender);
+        }
+    }
 
-	@WrapMethod(method = "tickEffects")
-	private void tickStatusEffects(Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call();
-		}
-	}
+    @WrapMethod(method = "tickEffects")
+    private void tickStatusEffects(Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call();
+        }
+    }
 
-	@WrapMethod(method = "refreshDirtyAttributes")
-	private void updateAttributes(Operation<Void> original) {
-		synchronized (async$lock) {
-			original.call();
-		}
-	}
+    @WrapMethod(method = "refreshDirtyAttributes")
+    private void updateAttributes(Operation<Void> original) {
+        synchronized (async$lock) {
+            original.call();
+        }
+    }
 }
