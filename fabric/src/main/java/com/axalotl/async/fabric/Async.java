@@ -23,7 +23,7 @@ public class Async implements ModInitializer {
         LOGGER.info("Initializing Async...");
         com.axalotl.async.fabric.config.AsyncConfig.init();
         FabricPlatformEvents.init();
-        if (VMP && enableAsyncSpawn) {
+        if (VMP && enableAsyncSpawn.getValue()) {
             LOGGER.error("Incompatible configuration: Async spawn enabled while VMP mod is active. Crashing to prevent instability.");
             throw new RuntimeException("Crashing due to VMP mod incompatibility with Async Spawn Configuration.");
         }

@@ -21,7 +21,7 @@ public abstract class EntityMixin {
 
     @WrapMethod(method = "move")
     private void move(MoverType type, Vec3 movement, Operation<Void> original) {
-        if (AsyncConfig.enableEntityMoveSync) {
+        if (AsyncConfig.enableEntityMoveSync.getValue()) {
             synchronized (async$lock) {
                 original.call(type, movement);
             }

@@ -13,10 +13,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static com.axalotl.async.common.config.AsyncConfig.*;
+import static com.axalotl.async.common.config.AsyncConfig.getDefaultSynchronizedEntities;
 
 public class AsyncConfig {
-    public static final Logger LOGGER = LoggerFactory.getLogger("Async Config");
-
     private static final Supplier<CommentedFileConfig> configSupplier =
             () -> CommentedFileConfig.builder(FabricLoader.getInstance().getConfigDir().resolve("async.toml"))
                     .preserveInsertionOrder()
@@ -47,49 +46,50 @@ public class AsyncConfig {
     }
 
     public static void saveConfig() {
-        CONFIG.set("disabled", disabled);
-        CONFIG.setComment("disabled", "Globally disable all toggleable functionality within the async system. Set to true to stop all asynchronous operations.");
+        CONFIG.set(disabled.getKey(), disabled.getValue());
+        CONFIG.setComment(disabled.getKey(), "Globally disable all toggleable functionality within the async system. Set to true to stop all asynchronous operations.");
 
-        CONFIG.set("paraMax", paraMax);
-        CONFIG.setComment("paraMax", "Maximum number of threads to use for parallel processing. Set to -1 to use default value. Note: If 'virtualThreads' is enabled, this setting will be ignored.");
+        CONFIG.set(paraMax.getKey(), paraMax.getValue());
+        CONFIG.setComment(paraMax.getKey(), "Maximum number of threads to use for parallel processing. Set to -1 to use default value. Note: If 'virtualThreads' is enabled, this setting will be ignored.");
 
-        CONFIG.set("enableEntityMoveSync", enableEntityMoveSync);
-        CONFIG.setComment("enableEntityMoveSync", "Modifies entity movement processing: true for synchronous movement (vanilla mechanics intact, less performance), false for asynchronous movement (better performance, may break mechanics).");
+        CONFIG.set(enableEntityMoveSync.getKey(), enableEntityMoveSync.getValue());
+        CONFIG.setComment(enableEntityMoveSync.getKey(), "Modifies entity movement processing: true for synchronous movement (vanilla mechanics intact, less performance), false for asynchronous movement (better performance, may break mechanics).");
 
-        CONFIG.set("synchronizedEntities", synchronizedEntities.stream().map(ResourceLocation::toString).toList());
-        CONFIG.setComment("synchronizedEntities", "List of entity class for sync processing.");
+        CONFIG.set(synchronizedEntities.getKey(), synchronizedEntities.getValue().stream().map(ResourceLocation::toString).toList());
+        CONFIG.setComment(synchronizedEntities.getKey(), "List of entity class for sync processing.");
 
-        CONFIG.set("enableAsyncSpawn", enableAsyncSpawn);
-        CONFIG.setComment("enableAsyncSpawn", "Enables parallel processing of entity spawns. Warning, incompatible with VMP mod && Carpet mod lagFreeSpawning rule.");
+        CONFIG.set(enableAsyncSpawn.getKey(), enableAsyncSpawn.getValue());
+        CONFIG.setComment(enableAsyncSpawn.getKey(), "Enables parallel processing of entity spawns. Warning, incompatible with VMP mod && Carpet mod lagFreeSpawning rule.");
 
-        CONFIG.set("recoverFromErrors", recoverFromErrors);
-        CONFIG.setComment("recoverFromErrors", "Tries to recover from entity processing errors instead of crashing.");
+        CONFIG.set(recoverFromErrors.getKey(), recoverFromErrors.getValue());
+        CONFIG.setComment(recoverFromErrors.getKey(), "Tries to recover from entity processing errors instead of crashing.");
 
         CONFIG.save();
         LOGGER.info("Configuration saved successfully.");
     }
 
     private static void loadConfigValues() {
-        Set<String> processedKeys = new HashSet<>(List.of("disabled", "paraMax", "enableEntityMoveSync", "synchronizedEntities"));
+        Set<String> processedKeys = new HashSet<>(List.of(
+                disabled.getKey(),
+                paraMax.getKey(),
+                enableEntityMoveSync.getKey(),
+                synchronizedEntities.getKey()));
 
-        disabled = CONFIG.getOrElse("disabled", disabled);
-        paraMax = CONFIG.getOrElse("paraMax", paraMax);
-        enableEntityMoveSync = CONFIG.getOrElse("enableEntityMoveSync", enableEntityMoveSync);
-        enableAsyncSpawn = CONFIG.getOrElse("enableAsyncSpawn", enableAsyncSpawn);
-        recoverFromErrors = CONFIG.getOrElse("recoverFromErrors", recoverFromErrors);
+        disabled.setValue(CONFIG.getOrElse(disabled.getKey(), disabled.getValue()));
+        paraMax.setValue(CONFIG.getOrElse(paraMax.getKey(), paraMax.getValue()));
+        enableEntityMoveSync.setValue(CONFIG.getOrElse(enableEntityMoveSync.getKey(), enableEntityMoveSync.getValue()));
+        enableAsyncSpawn.setValue(CONFIG.getOrElse(enableAsyncSpawn.getKey(), enableAsyncSpawn.getValue()));
+        recoverFromErrors.setValue(CONFIG.getOrElse(recoverFromErrors.getKey(), recoverFromErrors.getValue()));
 
-        synchronizedEntities = new HashSet<>();
-        CONFIG.<List<String>>getOptional("synchronizedEntities").ifPresentOrElse(ids -> {
+        synchronizedEntities.setValue(new HashSet<>());
+        CONFIG.<List<String>>getOptional(synchronizedEntities.getKey()).ifPresentOrElse(ids -> {
             for (String id : ids) {
                 ResourceLocation identifier = ResourceLocation.tryParse(id);
                 if (identifier != null) {
-                    synchronizedEntities.add(identifier);
+                    synchronizedEntities.getValue().add(identifier);
                 }
             }
-        }, () -> synchronizedEntities = new HashSet<>(Set.of(
-                ResourceLocation.withDefaultNamespace("tnt"),
-                ResourceLocation.withDefaultNamespace("item"),
-                ResourceLocation.withDefaultNamespace("experience_orb"))));
+        }, () -> synchronizedEntities.setValue(getDefaultSynchronizedEntities()));
 
         Set<String> keysToRemove = new HashSet<>();
         for (CommentedConfig.Entry entry : CONFIG.entrySet()) {
@@ -108,14 +108,10 @@ public class AsyncConfig {
     }
 
     private static void setDefaultValues() {
-        disabled = false;
-        paraMax = -1;
-        enableEntityMoveSync = false;
-        enableAsyncSpawn = false;
-        synchronizedEntities = new HashSet<>(Set.of(
-                ResourceLocation.withDefaultNamespace("tnt"),
-                ResourceLocation.withDefaultNamespace("item"),
-                ResourceLocation.withDefaultNamespace("experience_orb")
-        ));
+        disabled.setValue(false);
+        paraMax.setValue(-1);
+        enableEntityMoveSync.setValue(false);
+        enableAsyncSpawn.setValue(false);
+        synchronizedEntities.setValue(getDefaultSynchronizedEntities());
     }
 }

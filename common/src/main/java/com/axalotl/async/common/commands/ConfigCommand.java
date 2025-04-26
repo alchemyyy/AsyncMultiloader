@@ -23,17 +23,17 @@ public class ConfigCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> registerConfig(LiteralArgumentBuilder<CommandSourceStack> root) {
         return root.then(literal("config")
                 .then(literal("toggle").requires(cmdSrc -> cmdSrc.hasPermission(4)).executes(cmdCtx -> {
-                    AsyncConfig.disabled = !AsyncConfig.disabled;
+                    AsyncConfig.disabled.setValue(!AsyncConfig.disabled.getValue());
                     saveConfig();
                     MutableComponent message = prefix.copy().append(Component.literal("Async is now ").withStyle(style -> style.withColor(ChatFormatting.WHITE)))
-                            .append(Component.literal(AsyncConfig.disabled ? "disabled" : "enabled").withStyle(style -> style.withColor(ChatFormatting.GREEN)));
+                            .append(Component.literal(AsyncConfig.disabled.getValue() ? "disabled" : "enabled").withStyle(style -> style.withColor(ChatFormatting.GREEN)));
                     cmdCtx.getSource().sendSuccess(() -> message, true);
                     return 1;
                 }))
                 .then(literal("synchronizedEntities")
                         .requires(cmdSrc -> cmdSrc.hasPermission(4))
                         .executes(cmdCtx -> {
-                            Set<ResourceLocation> currentValue = AsyncConfig.synchronizedEntities;
+                            Set<ResourceLocation> currentValue = AsyncConfig.synchronizedEntities.getValue();
                             MutableComponent message = prefix.copy().append(Component.literal("Synchronized Entities: ").withStyle(style -> style.withColor(ChatFormatting.WHITE)));
                             if (currentValue.isEmpty()) {
                                 message.append(Component.literal("No entities synchronized.").withStyle(style -> style.withColor(ChatFormatting.RED)));
@@ -51,7 +51,7 @@ public class ConfigCommand {
                         .then(literal("add")
                                 .then(Commands.argument("entity", ResourceLocationArgument.id()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes(cmdCtx -> {
                                     ResourceLocation id = ResourceLocationArgument.getId(cmdCtx, "entity");
-                                    if (AsyncConfig.synchronizedEntities.contains(id)) {
+                                    if (AsyncConfig.synchronizedEntities.getValue().contains(id)) {
                                         MutableComponent message = prefix.copy()
                                                 .append(Component.literal("Error entity class ").withStyle(style -> style.withColor(ChatFormatting.RED)))
                                                 .append(Component.literal(id.toString()).withStyle(style -> style.withColor(ChatFormatting.RED)))
@@ -70,12 +70,12 @@ public class ConfigCommand {
                         .then(literal("remove")
                                 .then(Commands.argument("entity", ResourceLocationArgument.id())
                                         .suggests((context, builder) -> {
-                                            AsyncConfig.synchronizedEntities.forEach(id -> builder.suggest(id.toString()));
+                                            AsyncConfig.synchronizedEntities.getValue().forEach(id -> builder.suggest(id.toString()));
                                             return builder.buildFuture();
                                         })
                                         .executes(cmdCtx -> {
                                             ResourceLocation identifier = cmdCtx.getArgument("entity", ResourceLocation.class);
-                                            if (!AsyncConfig.synchronizedEntities.contains(identifier)) {
+                                            if (!AsyncConfig.synchronizedEntities.getValue().contains(identifier)) {
                                                 MutableComponent message = prefix.copy()
                                                         .append(Component.literal("Error entity class ").withStyle(style -> style.withColor(ChatFormatting.RED)))
                                                         .append(Component.literal(identifier.toString()).withStyle(style -> style.withColor(ChatFormatting.RED)))
@@ -93,7 +93,7 @@ public class ConfigCommand {
                                         }))))
                 .then(Commands.literal("setEntityMoveSync").requires(cmdSrc -> cmdSrc.hasPermission(4))
                         .executes(cmdCtx -> {
-                            boolean currentValue = AsyncConfig.enableEntityMoveSync;
+                            boolean currentValue = AsyncConfig.enableEntityMoveSync.getValue();
                             MutableComponent message = prefix.copy().append(Component.literal("Current value of entity move sync: ").withStyle(style -> style.withColor(ChatFormatting.WHITE)))
                                     .append(Component.literal(String.valueOf(currentValue)).withStyle(style -> style.withColor(ChatFormatting.GREEN)));
                             cmdCtx.getSource().sendSuccess(() -> message, false);
@@ -101,7 +101,7 @@ public class ConfigCommand {
                         })
                         .then(argument("value", BoolArgumentType.bool()).executes(cmdCtx -> {
                             boolean value = BoolArgumentType.getBool(cmdCtx, "value");
-                            AsyncConfig.enableEntityMoveSync = value;
+                            AsyncConfig.enableEntityMoveSync.setValue(value);
                             saveConfig();
                             MutableComponent message = prefix.copy().append(Component.literal("Entity move sync set to ").withStyle(style -> style.withColor(ChatFormatting.WHITE)))
                                     .append(Component.literal(String.valueOf(value)).withStyle(style -> style.withColor(ChatFormatting.GREEN)));

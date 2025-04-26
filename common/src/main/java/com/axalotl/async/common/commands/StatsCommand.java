@@ -54,8 +54,8 @@ public class StatsCommand {
                 .append(Component.literal("\nThread Utilization: ").withStyle(style -> style.withColor(ChatFormatting.WHITE)))
                 .append(Component.literal(DECIMAL_FORMAT.format(threadUtilization) + "%").withStyle(style -> style.withColor(ChatFormatting.GREEN)))
                 .append(Component.literal("\nAsync Status: ").withStyle(style -> style.withColor(ChatFormatting.WHITE)))
-                .append(Component.literal(AsyncConfig.disabled ? "Disabled" : "Enabled").withStyle(style ->
-                        style.withColor(AsyncConfig.disabled ? ChatFormatting.RED : ChatFormatting.GREEN)));
+                .append(Component.literal(AsyncConfig.disabled.getValue() ? "Disabled" : "Enabled").withStyle(style ->
+                        style.withColor(AsyncConfig.disabled.getValue() ? ChatFormatting.RED : ChatFormatting.GREEN)));
 
         source.sendSuccess(() -> message, true);
     }
@@ -132,7 +132,7 @@ public class StatsCommand {
     }
 
     private static void updateStats() {
-        if (AsyncConfig.disabled) {
+        if (AsyncConfig.disabled.getValue()) {
             resetStats();
             return;
         }

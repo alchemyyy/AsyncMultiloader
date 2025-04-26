@@ -122,13 +122,13 @@ public class ParallelProcessor {
 
     public static boolean shouldTickSynchronously(Entity entity) {
         UUID entityId = entity.getUUID();
-        boolean requiresSyncTick = AsyncConfig.disabled ||
+        boolean requiresSyncTick = AsyncConfig.disabled.getValue() ||
                 entity instanceof Projectile ||
                 entity instanceof AbstractMinecart ||
                 entity instanceof ServerPlayer ||
                 specialEntities.contains(entity.getClass()) ||
                 blacklistedEntity.contains(entityId) ||
-                AsyncConfig.synchronizedEntities.contains(EntityType.getKey(entity.getType())) ||
+                AsyncConfig.synchronizedEntities.getValue().contains(EntityType.getKey(entity.getType())) ||
                 entity.hasExactlyOnePlayerPassenger();
         if (requiresSyncTick) {
             return true;
@@ -172,7 +172,7 @@ public class ParallelProcessor {
 
     public static void asyncSpawn(ServerLevel world, LevelChunk chunk, NaturalSpawner.SpawnState spawnState, boolean spawnAnimals,
                                   boolean spawnMonsters, boolean rareSpawn) {
-        if (AsyncConfig.enableAsyncSpawn) {
+        if (AsyncConfig.enableAsyncSpawn.getValue()) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
                     NaturalSpawner.spawnForChunk(world, chunk, spawnState, spawnAnimals, spawnMonsters, rareSpawn), tickPool
             ).exceptionally(e -> {
@@ -188,7 +188,7 @@ public class ParallelProcessor {
 
     public static void postEntityTick() {
 
-        if (AsyncConfig.disabled) {
+        if (AsyncConfig.disabled.getValue()) {
             return;
         }
 
@@ -203,7 +203,7 @@ public class ParallelProcessor {
                     futuresList.toArray(new CompletableFuture[0])
             );
 
-            if (AsyncConfig.recoverFromErrors) {
+            if (AsyncConfig.recoverFromErrors.getValue()) {
                 allTasks.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
                     List<CompletableFuture<?>> incompleteFutures = futuresList.stream()
                             .filter(doneFuture -> !doneFuture.isDone())
@@ -234,7 +234,7 @@ public class ParallelProcessor {
                 world.getChunkSource().mainThreadProcessor.managedBlock(allTasks::isDone);
             });
         } catch (CompletionException e) {
-            if (AsyncConfig.recoverFromErrors) {
+            if (AsyncConfig.recoverFromErrors.getValue()) {
                 LOGGER.error("Critical error during entity tick processing", e);
 
                 for (CompletableFuture<?> future : futuresList) {
